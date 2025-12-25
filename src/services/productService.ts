@@ -6,7 +6,7 @@ import { ProductRepository } from "../repositories/productRepository";
 export class ProductService {
   private productRepository = new ProductRepository();
 
-  createProduct = async (
+  public createProduct = async (
     productData: Partial<IProduct>,
     userId: string
   ): Promise<IProduct> => {
@@ -27,7 +27,7 @@ export class ProductService {
     return await this.productRepository.create(productToCreate);
   };
 
-  getProductById = async (id: string): Promise<IProduct> => {
+  public getProductById = async (id: string): Promise<IProduct> => {
     const product = await this.productRepository.findById(id);
     if (!product) {
       throw new AppError("Product not found", 404);
@@ -35,11 +35,11 @@ export class ProductService {
     return product;
   };
 
-  getAllProducts = async (): Promise<IProduct[]> => {
+  public getAllProducts = async (): Promise<IProduct[]> => {
     return await this.productRepository.findAll();
   };
 
-  updateProduct = async (
+  public updateProduct = async (
     id: string,
     updateData: Partial<IProduct>
   ): Promise<IProduct> => {
@@ -79,7 +79,7 @@ export class ProductService {
     return updatedProduct;
   };
 
-  softDeleteProduct = async (id: string): Promise<IProduct> => {
+  public softDeleteProduct = async (id: string): Promise<IProduct> => {
     const productToDeactivate = await this.productRepository.findById(id);
     if (!productToDeactivate) {
       throw new AppError("Product not found", 404);

@@ -6,33 +6,51 @@ import { sendResponse } from "../utils/responseHandler";
 export class DashboardController {
   private dashboardService = new DashboardService();
 
-  getSalesSummary = catchAsync(async (req: Request, res: Response) => {
+  public getSalesSummary = catchAsync(async (req: Request, res: Response) => {
     const summary = await this.dashboardService.getSalesSummary(req.query);
     sendResponse(res, 200, "Sales summary retrieved successfully", summary);
   });
 
-  getDailySalesChart = catchAsync(async (req: Request, res: Response) => {
-    const chartData = await this.dashboardService.getDailySalesChart(req.query);
-    sendResponse(
-      res,
-      200,
-      "Daily sales chart retrieved successfully",
-      chartData
-    );
-  });
+  public getDailySalesChart = catchAsync(
+    async (req: Request, res: Response) => {
+      const chartData = await this.dashboardService.getDailySalesChart(
+        req.query
+      );
+      sendResponse(
+        res,
+        200,
+        "Daily sales chart retrieved successfully",
+        chartData
+      );
+    }
+  );
 
-  getTopProducts = catchAsync(async (req: Request, res: Response) => {
+  public getTopProducts = catchAsync(async (req: Request, res: Response) => {
     const topProducts = await this.dashboardService.getTopProducts(req.query);
     sendResponse(res, 200, "Top products retrieved successfully", topProducts);
   });
 
-  getInventorySummary = catchAsync(async (req: Request, res: Response) => {
-    const summary = await this.dashboardService.getInventorySummary();
-    sendResponse(res, 200, "Inventory summary retrieved successfully", summary);
-  });
+  public getInventorySummary = catchAsync(
+    async (req: Request, res: Response) => {
+      const summary = await this.dashboardService.getInventorySummary();
+      sendResponse(
+        res,
+        200,
+        "Inventory summary retrieved successfully",
+        summary
+      );
+    }
+  );
 
-  getPurchaseSummary = catchAsync(async (req: Request, res: Response) => {
-    const summary = await this.dashboardService.getPurchaseSummary(req.query);
-    sendResponse(res, 200, "Purchase summary retrieved successfully", summary);
-  });
+  public getPurchaseSummary = catchAsync(
+    async (req: Request, res: Response) => {
+      const summary = await this.dashboardService.getPurchaseSummary(req.query);
+      sendResponse(
+        res,
+        200,
+        "Purchase summary retrieved successfully",
+        summary
+      );
+    }
+  );
 }

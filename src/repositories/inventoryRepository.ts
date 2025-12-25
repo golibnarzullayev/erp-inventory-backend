@@ -5,35 +5,43 @@ import { InventoryExpirable } from "../models/InventoryExpirable";
 import { ClientSession } from "mongoose";
 
 export class InventoryRepository {
-  findOne = async (filter: any, session?: ClientSession) => {
+  public findOne = async (filter: any, session?: ClientSession) => {
     return await Inventory.findOne(filter).session(session || null);
   };
 
-  findSerialized = async (filter: any, session?: ClientSession) => {
+  public findSerialized = async (filter: any, session?: ClientSession) => {
     return await InventorySerialized.find(filter).session(session || null);
   };
 
-  findOneLot = async (filter: any, session?: ClientSession) => {
+  public findOneLot = async (filter: any, session?: ClientSession) => {
     return await InventoryLot.findOne(filter).session(session || null);
   };
 
-  findOneExpirable = async (filter: any, session?: ClientSession) => {
+  public findOneExpirable = async (filter: any, session?: ClientSession) => {
     return await InventoryExpirable.findOne(filter).session(session || null);
   };
 
-  findOneAndUpdate = async (filter: any, update: any, options: any) => {
+  public findOneAndUpdate = async (filter: any, update: any, options: any) => {
     return await Inventory.findOneAndUpdate(filter, update, options);
   };
 
-  updateManySerialized = async (filter: any, update: any, options: any) => {
+  public updateManySerialized = async (
+    filter: any,
+    update: any,
+    options: any
+  ) => {
     return await InventorySerialized.updateMany(filter, update, options);
   };
 
-  findOneAndUpdateLot = async (filter: any, update: any, options: any) => {
+  public findOneAndUpdateLot = async (
+    filter: any,
+    update: any,
+    options: any
+  ) => {
     return await InventoryLot.findOneAndUpdate(filter, update, options);
   };
 
-  findOneAndUpdateExpirable = async (
+  public findOneAndUpdateExpirable = async (
     filter: any,
     update: any,
     options: any
@@ -41,7 +49,7 @@ export class InventoryRepository {
     return await InventoryExpirable.findOneAndUpdate(filter, update, options);
   };
 
-  insertManySerialized = async (entries: any[], options: any) => {
+  public insertManySerialized = async (entries: any[], options: any) => {
     return await InventorySerialized.insertMany(entries, options);
   };
 }

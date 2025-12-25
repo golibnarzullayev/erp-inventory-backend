@@ -6,12 +6,12 @@ interface IResponse<T> {
   data?: T;
 }
 
-export const sendResponse = <T>(
+export const sendResponse = async <T>(
   res: Response,
   statusCode: number,
   message: string,
   data?: T
-) => {
+): Promise<void> => {
   const response: IResponse<T> = {
     success: statusCode >= 200 && statusCode < 300,
     message,

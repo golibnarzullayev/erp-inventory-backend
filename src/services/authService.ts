@@ -15,7 +15,7 @@ export class AuthService {
     });
   };
 
-  register = async (
+  public register = async (
     userData: Partial<IUser>
   ): Promise<{ token: string; user: IUser }> => {
     const newUser = await this.userRepository.create(userData);
@@ -24,7 +24,7 @@ export class AuthService {
     return { token, user: newUser };
   };
 
-  login = async (
+  public login = async (
     email: string,
     password: string
   ): Promise<{ token: string; user: IUser }> => {

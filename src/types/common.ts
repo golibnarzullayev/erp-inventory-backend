@@ -1,3 +1,6 @@
+import { Request } from "express";
+import { IUser } from "../models/User";
+
 export interface AuditFields {
   createdBy: string;
   createdAt: Date;
@@ -12,4 +15,8 @@ export interface ApiError {
   errorCode: string;
   message: string;
   field?: string;
+}
+
+export interface IRequest extends Request {
+  user: IUser;
 }

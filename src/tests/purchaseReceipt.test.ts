@@ -1,9 +1,7 @@
 import request from "supertest";
 import express from "express";
 import mongoose from "mongoose";
-import { MongoMemoryServer } from "mongodb-memory-server";
 import { Product } from "../models/Product";
-import { PurchaseReceipt } from "../models/PurchaseReceipt";
 import { Inventory } from "../models/Inventory";
 import productRoutes from "../routes/productRoutes";
 import purchaseReceiptRoutes from "../routes/purchaseReceiptRoutes";

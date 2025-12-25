@@ -2,9 +2,8 @@ import request from "supertest";
 import express from "express";
 import mongoose from "mongoose";
 import { Product } from "../models/Product";
-import { Sale } from "../models/Sale";
 import { Inventory } from "../models/Inventory";
-import * as inventoryService from "../services/inventoryService";
+import { InventoryService } from "../services/inventoryService";
 import productRoutes from "../routes/productRoutes";
 import saleRoutes from "../routes/saleRoutes";
 import { ProductTrackingType, DocumentStatus } from "../constants/enums";
@@ -15,6 +14,8 @@ app.use("/api/products", productRoutes);
 app.use("/api/sales", saleRoutes);
 
 describe("Sales Flow", () => {
+  const inventoryService = new InventoryService();
+
   it("should decrease stock when a sale is confirmed", async () => {
     const product = new Product({
       name: "Test Sale Product",

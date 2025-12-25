@@ -18,7 +18,7 @@ export class InventoryService {
   private inventoryRepository = new InventoryRepository();
   private productRepository = new ProductRepository();
 
-  checkAvailability = async (
+  public checkAvailability = async (
     params: StockAdjustmentParams
   ): Promise<boolean> => {
     const {
@@ -82,7 +82,7 @@ export class InventoryService {
     }
   };
 
-  decreaseStock = async (params: StockAdjustmentParams) => {
+  public decreaseStock = async (params: StockAdjustmentParams) => {
     const {
       productId,
       warehouseId,
@@ -136,7 +136,7 @@ export class InventoryService {
     }
   };
 
-  increaseStock = async (params: StockAdjustmentParams) => {
+  public increaseStock = async (params: StockAdjustmentParams) => {
     const {
       productId,
       warehouseId,

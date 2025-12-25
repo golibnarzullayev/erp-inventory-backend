@@ -6,12 +6,12 @@ import { sendResponse } from "../utils/responseHandler";
 export class AuthController {
   private authService = new AuthService();
 
-  register = catchAsync(async (req: Request, res: Response) => {
+  public register = catchAsync(async (req: Request, res: Response) => {
     const { token, user } = await this.authService.register(req.body);
     sendResponse(res, 201, "User registered successfully", { token, user });
   });
 
-  login = catchAsync(async (req: Request, res: Response) => {
+  public login = catchAsync(async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const { token, user } = await this.authService.login(email, password);
     sendResponse(res, 200, "Logged in successfully", { token, user });

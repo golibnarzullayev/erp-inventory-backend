@@ -5,7 +5,7 @@ import { DocumentStatus } from "../constants/enums";
 import { ClientSession } from "mongoose";
 
 export class ProductRepository {
-  create = async (
+  public create = async (
     productData: Partial<IProduct>,
     session?: ClientSession
   ): Promise<IProduct> => {
@@ -13,18 +13,18 @@ export class ProductRepository {
     return await product.save({ session });
   };
 
-  findById = async (
+  public findById = async (
     id: string,
     session?: ClientSession
   ): Promise<IProduct | null> => {
     return await Product.findById(id).session(session || null);
   };
 
-  findAll = async (): Promise<IProduct[]> => {
+  public findAll = async (): Promise<IProduct[]> => {
     return await Product.find({ isActive: true });
   };
 
-  updateById = async (
+  public updateById = async (
     id: string,
     updateData: Partial<IProduct>,
     session?: ClientSession
@@ -35,7 +35,7 @@ export class ProductRepository {
     });
   };
 
-  findInUse = async (
+  public findInUse = async (
     productId: string,
     session?: ClientSession
   ): Promise<boolean> => {
@@ -52,7 +52,11 @@ export class ProductRepository {
     return !!sale;
   };
 
-  updateMany = async (filter: any, update: any, session?: ClientSession) => {
+  public updateMany = async (
+    filter: any,
+    update: any,
+    session?: ClientSession
+  ) => {
     return await Product.updateMany(filter, update, { session });
   };
 }

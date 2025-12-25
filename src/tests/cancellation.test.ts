@@ -2,10 +2,8 @@ import request from "supertest";
 import express from "express";
 import mongoose from "mongoose";
 import { Product } from "../models/Product";
-import { PurchaseReceipt } from "../models/PurchaseReceipt";
-import { Sale } from "../models/Sale";
 import { Inventory } from "../models/Inventory";
-import * as inventoryService from "../services/inventoryService";
+import { InventoryService } from "../services/inventoryService";
 import productRoutes from "../routes/productRoutes";
 import purchaseReceiptRoutes from "../routes/purchaseReceiptRoutes";
 import saleRoutes from "../routes/saleRoutes";
@@ -18,6 +16,8 @@ app.use("/api/purchase-receipts", purchaseReceiptRoutes);
 app.use("/api/sales", saleRoutes);
 
 describe("Cancellation Flow", () => {
+  const inventoryService = new InventoryService();
+
   it("should revert stock when a confirmed purchase receipt is cancelled", async () => {
     const product = new Product({
       name: "Cancel Test Product",
