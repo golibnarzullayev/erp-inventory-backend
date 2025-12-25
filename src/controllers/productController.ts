@@ -19,10 +19,28 @@ export class ProductController {
     sendResponse(res, 200, "Product retrieved successfully", product);
   });
 
-  public getAllProducts = catchAsync(async (req: Request, res: Response) => {
-    const products = await this.productService.getAllProducts();
-    sendResponse(res, 200, "Products retrieved successfully", products);
-  });
+  public getAllWithPagination = catchAsync(
+    async (req: Request, res: Response) => {
+      const {
+        page = 1,
+        limit = 10,
+        search,
+        sortBy = "createdAt",
+        sortOrder = "desc",
+      } = req.query;
+
+      const options = {
+        page: parseInt(page as string),
+        limit: parseInt(limit as string),
+        search: search as string,
+        sortBy: sortBy as string,
+        sortOrder: sortOrder as "asc" | "desc",
+      };
+
+      const result = await this.productService.getAllWithPagination(options);
+      sendResponse(res, 200, "Products retrieved successfully", result);
+    }
+  );
 
   public updateProduct = catchAsync(async (req: Request, res: Response) => {
     const product = await this.productService.updateProduct(

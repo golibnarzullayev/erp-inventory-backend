@@ -24,6 +24,19 @@ export class ProductRepository {
     return await Product.find({ isActive: true });
   };
 
+  public count = async (filter: any = {}): Promise<number> => {
+    return await Product.countDocuments(filter);
+  };
+
+  public findWithPagination = async (
+    filter: any = {},
+    sort: any = {},
+    skip: number = 0,
+    limit: number = 10
+  ): Promise<IProduct[]> => {
+    return await Product.find(filter).sort(sort).skip(skip).limit(limit);
+  };
+
   public updateById = async (
     id: string,
     updateData: Partial<IProduct>,

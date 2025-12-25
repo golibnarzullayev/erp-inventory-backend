@@ -29,7 +29,7 @@ export class ProductRoutes {
       validate(getProductSchema),
       this.productController.getProductById
     );
-    this.router.get("/", this.productController.getAllProducts);
+    this.router.get("/", this.productController.getAllWithPagination);
     this.router.put(
       "/:id",
       passport.authenticate("jwt", { session: false }),

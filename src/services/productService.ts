@@ -39,6 +39,70 @@ export class ProductService {
     return await this.productRepository.findAll();
   };
 
+  public getAllWithPagination = async (options: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    sortBy?: string;
+    sortOrder?: "asc" | "desc";
+  }): Promise<{
+    data: IProduct[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      totalPages: number;
+      hasNext: boolean;
+      hasPrev: boolean;
+    };
+  }> => {
+    const page = options.page || 1;
+    const limit = Math.min(options.limit || 10, 100);
+    const search = options.search || "";
+    const sortBy = options.sortBy || "createdAt";
+    const sortOrder = options.sortOrder || "desc";
+
+    const skip = (page - 1) * limit;
+
+    // Build search filter
+    let filter: any = { isActive: true };
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { sku: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    // Build sort object
+    const sort: any = {};
+    sort[sortBy] = sortOrder === "asc" ? 1 : -1;
+
+    // Get total count
+    const total = await this.productRepository.count(filter);
+
+    // Get paginated results
+    const data = await this.productRepository.findWithPagination(
+      filter,
+      sort,
+      skip,
+      limit
+    );
+
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      data,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1,
+      },
+    };
+  };
+
   public updateProduct = async (
     id: string,
     updateData: Partial<IProduct>
