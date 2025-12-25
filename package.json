@@ -48,5 +48,10 @@
     "swagger-ui-express": "^5.0.1",
     "yamljs": "^0.3.0",
     "zod": "^4.2.1"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "swagger.json"
+    ]
   }
 }
