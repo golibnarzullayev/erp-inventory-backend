@@ -4,8 +4,6 @@ info:
   description: API documentation for the ERP Inventory system.
   version: 1.0.0
 servers:
-  - url: http://localhost:3000/api
-    description: Development server
   - url: https://erp.narzullayev.uz/api
     description: Production server
 
