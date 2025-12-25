@@ -6,6 +6,8 @@ info:
 servers:
   - url: http://localhost:3000/api
     description: Development server
+  - url: https://erp.narzullayev.uz/api
+    description: Production server
 
 components:
   securitySchemes:
