@@ -1,0 +1,41 @@
+{
+  "name": "erp-inventory-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "nodemon src/index.ts",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
+    "@types/dotenv": "^6.1.1",
+    "@types/express": "^5.0.6",
+    "@types/mongoose": "^5.11.96",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^25.0.3",
+    "nodemon": "^3.1.11",
+    "supertest": "^7.1.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^9.0.3",
+    "morgan": "^1.10.1",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0",
+    "zod": "^4.2.1"
+  }
+}

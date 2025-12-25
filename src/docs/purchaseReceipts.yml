@@ -1,0 +1,88 @@
+paths:
+  /purchase-receipts:
+    post:
+      summary: Create a new purchase receipt
+      tags:
+        - Purchase Receipts
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                supplierId:
+                  type: string
+                warehouseId:
+                  type: string
+                currency:
+                  type: string
+                lines:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      productId:
+                        type: string
+                      quantity:
+                        type: number
+                      unitPrice:
+                        type: number
+      responses:
+        "201":
+          description: Purchase receipt created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PurchaseReceipt"
+  /purchase-receipts/{id}/confirm:
+    put:
+      summary: Confirm a purchase receipt
+      tags:
+        - Purchase Receipts
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Purchase receipt confirmed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PurchaseReceipt"
+  /purchase-receipts/{id}/cancel:
+    put:
+      summary: Cancel a purchase receipt
+      tags:
+        - Purchase Receipts
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+      responses:
+        "200":
+          description: Purchase receipt cancelled successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PurchaseReceipt"

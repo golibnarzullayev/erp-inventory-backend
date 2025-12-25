@@ -1,0 +1,122 @@
+openapi: 3.0.0
+info:
+  title: ERP Inventory API
+  description: API documentation for the ERP Inventory system.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api
+    description: Development server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: [user, admin]
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        sku:
+          type: string
+        unitOfMeasure:
+          type: string
+        trackingType:
+          type: string
+          enum: [SIMPLE, EXPIRABLE, SERIALIZED, LOT_TRACKED, VARIANT]
+        isVariant:
+          type: boolean
+        parentProduct:
+          type: string
+        variants:
+          type: array
+          items:
+            type: string
+    PurchaseReceiptLine:
+      type: object
+      properties:
+        productId:
+          type: string
+        quantity:
+          type: number
+        unitPrice:
+          type: number
+        lotCode:
+          type: string
+        expirationDate:
+          type: string
+          format: date
+        serialNumbers:
+          type: array
+          items:
+            type: string
+    PurchaseReceipt:
+      type: object
+      properties:
+        _id:
+          type: string
+        supplierId:
+          type: string
+        warehouseId:
+          type: string
+        currency:
+          type: string
+        status:
+          type: string
+          enum: [DRAFT, CONFIRMED, CANCELLED]
+        lines:
+          type: array
+          items:
+            $ref: "#/components/schemas/PurchaseReceiptLine"
+    SaleLine:
+      type: object
+      properties:
+        productId:
+          type: string
+        quantity:
+          type: number
+        unitPrice:
+          type: number
+        lotCode:
+          type: string
+        expirationDate:
+          type: string
+          format: date
+        serialNumbers:
+          type: array
+          items:
+            type: string
+    Sale:
+      type: object
+      properties:
+        _id:
+          type: string
+        warehouseId:
+          type: string
+        currency:
+          type: string
+        status:
+          type: string
+          enum: [DRAFT, CONFIRMED, CANCELLED]
+        lines:
+          type: array
+          items:
+            $ref: "#/components/schemas/SaleLine"
+
+paths: {}

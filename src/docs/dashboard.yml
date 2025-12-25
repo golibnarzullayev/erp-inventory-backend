@@ -1,0 +1,135 @@
+paths:
+  /dashboard/sales-summary:
+    get:
+      summary: Get a summary of sales
+      tags:
+        - Dashboard
+      parameters:
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Sales summary retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalSales:
+                    type: number
+                  numberOfOrders:
+                    type: integer
+                  averageOrderValue:
+                    type: number
+  /dashboard/daily-sales-chart:
+    get:
+      summary: Get daily sales chart data
+      tags:
+        - Dashboard
+      parameters:
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Daily sales chart data retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    date:
+                      type: string
+                      format: date
+                    totalSales:
+                      type: number
+  /dashboard/top-products:
+    get:
+      summary: Get top selling products
+      tags:
+        - Dashboard
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Top products retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    product:
+                      $ref: "#/components/schemas/Product"
+                    totalQuantitySold:
+                      type: integer
+  /dashboard/inventory-summary:
+    get:
+      summary: Get an inventory summary
+      tags:
+        - Dashboard
+      responses:
+        "200":
+          description: Inventory summary retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalProducts:
+                    type: integer
+                  totalQuantityOnHand:
+                    type: integer
+                  inventoryValue:
+                    type: number
+  /dashboard/purchase-summary:
+    get:
+      summary: Get a summary of purchases
+      tags:
+        - Dashboard
+      parameters:
+        - in: query
+          name: startDate
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: endDate
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Purchase summary retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalPurchases:
+                    type: number
+                  numberOfReceipts:
+                    type: integer
+                  averageReceiptValue:
+                    type: number

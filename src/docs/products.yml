@@ -1,0 +1,107 @@
+paths:
+  /products:
+    get:
+      summary: Get all products
+      tags:
+        - Products
+      responses:
+        "200":
+          description: A list of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+    post:
+      summary: Create a new product
+      tags:
+        - Products
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                sku:
+                  type: string
+                unitOfMeasure:
+                  type: string
+                trackingType:
+                  type: string
+                  enum: [SIMPLE, EXPIRABLE, SERIALIZED, LOT_TRACKED, VARIANT]
+      responses:
+        "201":
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+  /products/{id}:
+    get:
+      summary: Get a product by ID
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A single product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+    put:
+      summary: Update a product
+      tags:
+        - Products
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                sku:
+                  type: string
+      responses:
+        "200":
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+    delete:
+      summary: Deactivate a product
+      tags:
+        - Products
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Product deactivated successfully
