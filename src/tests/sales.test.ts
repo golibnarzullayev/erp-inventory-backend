@@ -32,7 +32,6 @@ describe("Sales Flow", () => {
       quantity: 20,
     });
 
-    // 2. Create a draft sale
     const saleData = {
       warehouseId,
       currency: "USD",

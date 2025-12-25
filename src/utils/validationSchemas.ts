@@ -39,7 +39,6 @@ export const getProductSchema = z.object({
   params: z.object(params),
 });
 
-// Purchase Receipt Schemas
 const purchaseReceiptLineSchema = z.object({
   productId: z.string().min(1, "Product ID is required"),
   quantity: z.number().min(1, "Quantity must be at least 1"),
@@ -81,7 +80,6 @@ export const cancelSaleSchema = z.object({
   }),
 });
 
-// Sale Schemas
 const saleLineSchema = z.object({
   productId: z.string().min(1, "Product ID is required"),
   quantity: z.number().min(1, "Quantity must be at least 1"),
@@ -103,7 +101,6 @@ export const createSaleSchema = z.object({
   }),
 });
 
-// Dashboard Schemas
 export const dateRangeFilterSchema = z.object({
   query: z.object({
     startDate: z.string().datetime().optional(),
