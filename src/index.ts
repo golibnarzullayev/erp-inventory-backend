@@ -1,11 +1,7 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import connectDB from "./config/database";
-import productRoutes from "./routes/productRoutes";
-import purchaseReceiptRoutes from "./routes/purchaseReceiptRoutes";
-import saleRoutes from "./routes/saleRoutes";
-import dashboardRoutes from "./routes/dashboardRoutes";
-import authRoutes from "./routes/authRoutes";
+import routes from "./routes";
 import passport from "./config/passport";
 import { errorHandler } from "./middlewares/errorHandler";
 import cors from "cors";
@@ -25,11 +21,7 @@ app.get("/", (_req: Request, res: Response) => {
   res.send("ERP Backend is running!");
 });
 
-app.use("/api/products", productRoutes);
-app.use("/api/purchase-receipts", purchaseReceiptRoutes);
-app.use("/api/sales", saleRoutes);
-app.use("/api/auth", authRoutes);
-app.use("/api/dashboard", dashboardRoutes);
+app.use("/api", routes);
 
 app.use(errorHandler);
 

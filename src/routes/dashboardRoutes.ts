@@ -1,32 +1,48 @@
 import { Router } from "express";
-import * as dashboardController from "../controllers/dashboardController";
+import { DashboardController } from "../controllers/dashboardController";
 import { validate } from "../middlewares/validate";
 import { dateRangeFilterSchema } from "../utils/validationSchemas";
 
-const router = Router();
+export class DashboardRoutes {
+  private router = Router();
+  private dashboardController = new DashboardController();
 
-router.get(
-  "/sales-summary",
-  validate(dateRangeFilterSchema),
-  dashboardController.getSalesSummary
-);
+  constructor() {
+    this.initializeRoutes();
+  }
 
-router.get(
-  "/daily-sales-chart",
-  validate(dateRangeFilterSchema),
-  dashboardController.getDailySalesChart
-);
+  private initializeRoutes() {
+    this.router.get(
+      "/sales-summary",
+      validate(dateRangeFilterSchema),
+      this.dashboardController.getSalesSummary
+    );
 
-router.get(
-  "/top-products",
-  validate(dateRangeFilterSchema),
-  dashboardController.getTopProducts
-);
-router.get("/inventory-summary", dashboardController.getInventorySummary);
-router.get(
-  "/purchase-summary",
-  validate(dateRangeFilterSchema),
-  dashboardController.getPurchaseSummary
-);
+    this.router.get(
+      "/daily-sales-chart",
+      validate(dateRangeFilterSchema),
+      this.dashboardController.getDailySalesChart
+    );
 
-export default router;
+    this.router.get(
+      "/top-products",
+      validate(dateRangeFilterSchema),
+      this.dashboardController.getTopProducts
+    );
+    this.router.get(
+      "/inventory-summary",
+      this.dashboardController.getInventorySummary
+    );
+    this.router.get(
+      "/purchase-summary",
+      validate(dateRangeFilterSchema),
+      this.dashboardController.getPurchaseSummary
+    );
+  }
+
+  getRouter() {
+    return this.router;
+  }
+}
+
+export default new DashboardRoutes().getRouter();

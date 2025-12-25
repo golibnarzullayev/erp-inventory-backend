@@ -1,6 +1,6 @@
 import { Router } from "express";
 import passport from "passport";
-import * as purchaseReceiptController from "../controllers/purchaseReceiptController";
+import { PurchaseReceiptController } from "../controllers/purchaseReceiptController";
 import { validate } from "../middlewares/validate";
 import {
   createPurchaseReceiptSchema,
@@ -8,27 +8,40 @@ import {
   cancelPurchaseReceiptSchema,
 } from "../utils/validationSchemas";
 
-const router = Router();
+export class PurchaseReceiptRoutes {
+  private router = Router();
+  private purchaseReceiptController = new PurchaseReceiptController();
 
-router.post(
-  "/",
-  passport.authenticate("jwt", { session: false }),
-  validate(createPurchaseReceiptSchema),
-  purchaseReceiptController.createPurchaseReceipt
-);
+  constructor() {
+    this.initializeRoutes();
+  }
 
-router.put(
-  "/:id/confirm",
-  passport.authenticate("jwt", { session: false }),
-  validate(confirmOrCancelSchema),
-  purchaseReceiptController.confirmPurchaseReceipt
-);
+  private initializeRoutes() {
+    this.router.post(
+      "/",
+      passport.authenticate("jwt", { session: false }),
+      validate(createPurchaseReceiptSchema),
+      this.purchaseReceiptController.createPurchaseReceipt
+    );
 
-router.put(
-  "/:id/cancel",
-  passport.authenticate("jwt", { session: false }),
-  validate(cancelPurchaseReceiptSchema),
-  purchaseReceiptController.cancelPurchaseReceipt
-);
+    this.router.put(
+      "/:id/confirm",
+      passport.authenticate("jwt", { session: false }),
+      validate(confirmOrCancelSchema),
+      this.purchaseReceiptController.confirmPurchaseReceipt
+    );
 
-export default router;
+    this.router.put(
+      "/:id/cancel",
+      passport.authenticate("jwt", { session: false }),
+      validate(cancelPurchaseReceiptSchema),
+      this.purchaseReceiptController.cancelPurchaseReceipt
+    );
+  }
+
+  getRouter() {
+    return this.router;
+  }
+}
+
+export default new PurchaseReceiptRoutes().getRouter();

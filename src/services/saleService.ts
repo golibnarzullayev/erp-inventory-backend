@@ -1,153 +1,119 @@
 import { withTransaction } from "../utils/transaction";
 import { ISale } from "../models/Sale";
-import * as productRepository from "../repositories/productRepository";
-import * as saleRepository from "../repositories/saleRepository";
+import { ProductRepository } from "../repositories/productRepository";
+import { SaleRepository } from "../repositories/saleRepository";
 import { DocumentStatus, ProductTrackingType } from "../constants/enums";
-import * as inventoryService from "./inventoryService";
+import { InventoryService } from "./inventoryService";
 import AppError from "../utils/AppError";
 
-export const createSale = async (
-  saleData: Partial<ISale>,
-  userId: string
-): Promise<ISale> => {
-  if (!saleData.lines || saleData.lines.length === 0) {
-    throw new AppError("Sale must have at least one line.", 400);
-  }
+export class SaleService {
+  private productRepository = new ProductRepository();
+  private saleRepository = new SaleRepository();
+  private inventoryService = new InventoryService();
 
-  for (const line of saleData.lines) {
-    const product = await productRepository.findById(line.productId.toString());
-    if (!product) {
-      throw new AppError(`Product with ID ${line.productId} not found.`, 404);
+  createSale = async (
+    saleData: Partial<ISale>,
+    userId: string
+  ): Promise<ISale> => {
+    if (!saleData.lines || saleData.lines.length === 0) {
+      throw new AppError("Sale must have at least one line.", 400);
     }
 
-    if (
-      product.trackingType === ProductTrackingType.VARIANT &&
-      !product.isVariant
-    ) {
-      throw new AppError("Cannot sell a variant parent product.", 400);
-    }
-
-    const hasStock = await inventoryService.checkAvailability({
-      productId: line.productId.toString(),
-      warehouseId: saleData.warehouseId!.toString(),
-      quantity: line.quantity,
-      serialNumbers: line.serialNumbers,
-      lotCode: line.lotCode,
-      expirationDate: line.expirationDate,
-    });
-
-    if (!hasStock) {
-      throw new AppError(
-        `Insufficient stock for product ${product.name}.`,
-        400
+    for (const line of saleData.lines) {
+      const product = await this.productRepository.findById(
+        line.productId.toString()
       );
-    }
+      if (!product) {
+        throw new AppError(`Product with ID ${line.productId} not found.`, 404);
+      }
 
-    switch (product.trackingType) {
-      case ProductTrackingType.LOT_TRACKED:
-        if (!line.lotCode) {
-          throw new AppError(
-            `Lot code is required for product ${product.name}.`,
-            400
-          );
-        }
-        break;
-      case ProductTrackingType.SERIALIZED:
-        if (
-          !line.serialNumbers ||
-          line.serialNumbers.length !== line.quantity
-        ) {
-          throw new AppError(
-            `The number of serial numbers must match the quantity for product ${product.name}.`,
-            400
-          );
-        }
-        break;
-    }
-  }
+      if (
+        product.trackingType === ProductTrackingType.VARIANT &&
+        !product.isVariant
+      ) {
+        throw new AppError("Cannot sell a variant parent product.", 400);
+      }
 
-  const saleToCreate = { ...saleData, createdBy: userId };
-  return await saleRepository.create(saleToCreate);
-};
-
-export const confirmSale = async (
-  saleId: string,
-  userId: string
-): Promise<ISale> => {
-  return withTransaction(async (session) => {
-    const sale = await saleRepository.findById(saleId, session);
-
-    if (!sale) {
-      throw new AppError("Sale not found.", 404);
-    }
-
-    if (sale.status !== DocumentStatus.DRAFT) {
-      throw new AppError("Only DRAFT sales can be confirmed.", 400);
-    }
-
-    for (const line of sale.lines) {
-      const hasStock = await inventoryService.checkAvailability({
+      const hasStock = await this.inventoryService.checkAvailability({
         productId: line.productId.toString(),
-        warehouseId: sale.warehouseId.toString(),
+        warehouseId: saleData.warehouseId!.toString(),
         quantity: line.quantity,
         serialNumbers: line.serialNumbers,
         lotCode: line.lotCode,
         expirationDate: line.expirationDate,
-        session,
       });
 
       if (!hasStock) {
-        const product = await productRepository.findById(
-          line.productId.toString(),
-          session
-        );
         throw new AppError(
-          `Insufficient stock for product ${product?.name} at confirmation.`,
+          `Insufficient stock for product ${product.name}.`,
           400
         );
       }
+
+      switch (product.trackingType) {
+        case ProductTrackingType.LOT_TRACKED:
+          if (!line.lotCode) {
+            throw new AppError(
+              `Lot code is required for product ${product.name}.`,
+              400
+            );
+          }
+          break;
+        case ProductTrackingType.SERIALIZED:
+          if (
+            !line.serialNumbers ||
+            line.serialNumbers.length !== line.quantity
+          ) {
+            throw new AppError(
+              `The number of serial numbers must match the quantity for product ${product.name}.`,
+              400
+            );
+          }
+          break;
+      }
     }
 
-    for (const line of sale.lines) {
-      await inventoryService.decreaseStock({
-        productId: line.productId.toString(),
-        warehouseId: sale.warehouseId.toString(),
-        quantity: line.quantity,
-        serialNumbers: line.serialNumbers,
-        lotCode: line.lotCode,
-        expirationDate: line.expirationDate,
-        session,
-      });
-    }
+    const saleToCreate = { ...saleData, createdBy: userId };
+    return await this.saleRepository.create(saleToCreate);
+  };
 
-    sale.status = DocumentStatus.CONFIRMED;
-    sale.confirmedBy = userId;
-    sale.confirmedAt = new Date();
+  confirmSale = async (saleId: string, userId: string): Promise<ISale> => {
+    return withTransaction(async (session) => {
+      const sale = await this.saleRepository.findById(saleId, session);
 
-    await saleRepository.save(sale, session);
-    return sale;
-  });
-};
+      if (!sale) {
+        throw new AppError("Sale not found.", 404);
+      }
 
-export const cancelSale = async (
-  saleId: string,
-  userId: string,
-  reason: string
-): Promise<ISale> => {
-  return withTransaction(async (session) => {
-    const sale = await saleRepository.findById(saleId, session);
+      if (sale.status !== DocumentStatus.DRAFT) {
+        throw new AppError("Only DRAFT sales can be confirmed.", 400);
+      }
 
-    if (!sale) {
-      throw new AppError("Sale not found.", 404);
-    }
-
-    if (sale.status === DocumentStatus.CANCELLED) {
-      throw new AppError("This sale has already been cancelled.", 400);
-    }
-
-    if (sale.status === DocumentStatus.CONFIRMED) {
       for (const line of sale.lines) {
-        await inventoryService.increaseStock({
+        const hasStock = await this.inventoryService.checkAvailability({
+          productId: line.productId.toString(),
+          warehouseId: sale.warehouseId.toString(),
+          quantity: line.quantity,
+          serialNumbers: line.serialNumbers,
+          lotCode: line.lotCode,
+          expirationDate: line.expirationDate,
+          session,
+        });
+
+        if (!hasStock) {
+          const product = await this.productRepository.findById(
+            line.productId.toString(),
+            session
+          );
+          throw new AppError(
+            `Insufficient stock for product ${product?.name} at confirmation.`,
+            400
+          );
+        }
+      }
+
+      for (const line of sale.lines) {
+        await this.inventoryService.decreaseStock({
           productId: line.productId.toString(),
           warehouseId: sale.warehouseId.toString(),
           quantity: line.quantity,
@@ -157,14 +123,53 @@ export const cancelSale = async (
           session,
         });
       }
-    }
 
-    sale.status = DocumentStatus.CANCELLED;
-    sale.cancelledBy = userId;
-    sale.cancelledAt = new Date();
-    sale.cancellationReason = reason;
+      sale.status = DocumentStatus.CONFIRMED;
+      sale.confirmedBy = userId;
+      sale.confirmedAt = new Date();
 
-    await saleRepository.save(sale, session);
-    return sale;
-  });
-};
+      await this.saleRepository.save(sale, session);
+      return sale;
+    });
+  };
+
+  cancelSale = async (
+    saleId: string,
+    userId: string,
+    reason: string
+  ): Promise<ISale> => {
+    return withTransaction(async (session) => {
+      const sale = await this.saleRepository.findById(saleId, session);
+
+      if (!sale) {
+        throw new AppError("Sale not found.", 404);
+      }
+
+      if (sale.status === DocumentStatus.CANCELLED) {
+        throw new AppError("This sale has already been cancelled.", 400);
+      }
+
+      if (sale.status === DocumentStatus.CONFIRMED) {
+        for (const line of sale.lines) {
+          await this.inventoryService.increaseStock({
+            productId: line.productId.toString(),
+            warehouseId: sale.warehouseId.toString(),
+            quantity: line.quantity,
+            serialNumbers: line.serialNumbers,
+            lotCode: line.lotCode,
+            expirationDate: line.expirationDate,
+            session,
+          });
+        }
+      }
+
+      sale.status = DocumentStatus.CANCELLED;
+      sale.cancelledBy = userId;
+      sale.cancelledAt = new Date();
+      sale.cancellationReason = reason;
+
+      await this.saleRepository.save(sale, session);
+      return sale;
+    });
+  };
+}
